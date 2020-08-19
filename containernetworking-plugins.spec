@@ -1,12 +1,12 @@
 %global with_check 0
 
 Name:           containernetworking-plugins
-Version:        0.8.2
-Release:        3.git485be65
+Version:        0.8.6
+Release:        3.gitad10b6f
 Summary:        Library for use by writing CNI plugin
 License:        ASL 2.0
 URL:            https://github.com/containernetworking/plugins
-Source0:        https://github.com/containernetworking/plugins/archive/485be65581341430f9106a194a98f0f2412245fb.tar.gz
+Source0:        https://github.com/containernetworking/plugins/archive/ad10b6fa91aacd720f1f9ab94341a97a82a24965.tar.gz
 
 BuildRequires:  compiler(go-compiler) go-md2man git
 
@@ -68,7 +68,7 @@ Requires: golang(github.com/vishvananda/netlink/nl)
 prefix to be used at build time.
 
 %prep
-%autosetup -Sgit -n plugins-485be65581341430f9106a194a98f0f2412245fb -p1
+%autosetup -Sgit -n plugins-ad10b6fa91aacd720f1f9ab94341a97a82a24965 -p1
 rm -rf plugins/main/windows
 
 %build
@@ -173,5 +173,8 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc *.md
 
 %changelog
+* Wed Aug 19 2020 liuzekun <liuzekun@huawei.com> - 0.8.6-3.gitad10b6f
+- Upgrade cni plugins to v0.8.6
+
 * Wed Nov 20 2019 duyeyu <duyeyu@huawei.com> - 0.8.2-3.git485be65
 - Package init
