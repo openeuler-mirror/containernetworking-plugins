@@ -2,13 +2,13 @@
 
 Name:           containernetworking-plugins
 Version:        0.8.6
-Release:        3.gitad10b6f
+Release:        4.git40b4237
 Summary:        Library for use by writing CNI plugin
 License:        ASL 2.0
 URL:            https://github.com/containernetworking/plugins
 Source0:        https://github.com/containernetworking/plugins/archive/ad10b6fa91aacd720f1f9ab94341a97a82a24965.tar.gz
 
-BuildRequires:  compiler(go-compiler) go-md2man git
+BuildRequires:  compiler(go-compiler) git
 
 Obsoletes:      containernetworking-cni < 0.7.1-2
 Provides:       containernetworking-cni = %{version}-%{release} kubernetes-cni
@@ -24,32 +24,6 @@ allocated resources when the container is deleted.
 Summary:  Library for use by writing CNI plugin
 BuildArch:noarch
 
-Requires: golang(github.com/coreos/go-iptables/iptables)
-Requires: golang(github.com/vishvananda/netlink) golang(golang.org/x/sys/unix)
-
-Provides: golang(github.com/containernetworking/plugins/libcni)                                    = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/invoke)                                = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/invoke/fakes)                          = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/ip)                                    = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/ipam)                                  = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/ns)                                    = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/skel)                                  = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/testutils)                             = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/types)                                 = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/types/020)                             = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/types/current)                         = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/utils)                                 = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/utils/hwaddr)                          = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/utils/sysctl)                          = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/version)                               = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/version/legacy_examples)               = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/pkg/version/testhelpers)                   = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/plugins/ipam/host-local/backend)           = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/plugins/ipam/host-local/backend/allocator) = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/plugins/ipam/host-local/backend/disk)      = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/plugins/ipam/host-local/backend/testing)   = %{version}-%{release}
-Provides: golang(github.com/containernetworking/plugins/plugins/test/noop/debug)                   = %{version}-%{release}
-
 %description devel
 %{name}-devel provides libraries for those packages with the "github.com/containernetworking/plugins"
 prefix to be used at build time.
@@ -57,11 +31,7 @@ prefix to be used at build time.
 %package unit-test-devel
 Summary: Unit tests for containernetworking-plugins package
 
-Requires: %{name}-devel = %{version}-%{release} golang(github.com/d2g/dhcp4)
-Requires: golang(github.com/onsi/ginkgo) golang(github.com/onsi/ginkgo/config)
-Requires: golang(github.com/onsi/gomega) golang(github.com/onsi/ginkgo/extensions/table)
-Requires: golang(github.com/onsi/gomega/gbytes) golang(github.com/onsi/gomega/gexec)
-Requires: golang(github.com/vishvananda/netlink/nl)
+Requires: %{name}-devel = %{version}-%{release}
 
 %description unit-test-devel
 %{name}-devel provides libraries for those packages with the "github.com/containernetworking/plugins"
