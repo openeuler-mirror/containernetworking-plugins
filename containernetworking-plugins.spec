@@ -2,13 +2,13 @@
 
 Name:           containernetworking-plugins
 Version:        0.8.6
-Release:        4.git40b4237
+Release:        5.gitad10b6f
 Summary:        Library for use by writing CNI plugin
 License:        ASL 2.0
 URL:            https://github.com/containernetworking/plugins
 Source0:        https://github.com/containernetworking/plugins/archive/ad10b6fa91aacd720f1f9ab94341a97a82a24965.tar.gz
 
-BuildRequires:  compiler(go-compiler) git
+BuildRequires:  golang git
 
 Obsoletes:      containernetworking-cni < 0.7.1-2
 Provides:       containernetworking-cni = %{version}-%{release} kubernetes-cni
@@ -58,7 +58,7 @@ export PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/* plugins/sample"
 for dirpath in $PLUGINS; do
         if [ -d "$dirpath" ]; then
                 plugin="$(basename "$dirpath")"
-                %gobuild -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$dirpath
+                go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '%__global_ldflags %{?__golang_extldflags}'" -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$dirpath
         fi
 done
 
@@ -143,6 +143,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc *.md
 
 %changelog
+* Thu May  6 2021 lingsheng <lingsheng@huawei.com> - 0.8.6-5.gitad10b6f
+- Change BuildRequires to golang
+
 * Wed Aug 19 2020 liuzekun <liuzekun@huawei.com> - 0.8.6-3.gitad10b6f
 - Upgrade cni plugins to v0.8.6
 
