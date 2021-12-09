@@ -2,13 +2,13 @@
 
 Name:           containernetworking-plugins
 Version:        0.8.2
-Release:        3.git485be65
+Release:        4.git485be65
 Summary:        Library for use by writing CNI plugin
 License:        ASL 2.0
 URL:            https://github.com/containernetworking/plugins
 Source0:        https://github.com/containernetworking/plugins/archive/485be65581341430f9106a194a98f0f2412245fb.tar.gz
 
-BuildRequires:  compiler(go-compiler) git
+BuildRequires:  golang git
 
 Obsoletes:      containernetworking-cni < 0.7.1-2
 Provides:       containernetworking-cni = %{version}-%{release} kubernetes-cni
@@ -58,7 +58,7 @@ export PLUGINS="plugins/meta/* plugins/main/* plugins/ipam/* plugins/sample"
 for dirpath in $PLUGINS; do
         if [ -d "$dirpath" ]; then
                 plugin="$(basename "$dirpath")"
-                %gobuild -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$dirpath
+                go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '%__global_ldflags %{?__golang_extldflags}'" -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$dirpath
         fi
 done
 
@@ -143,5 +143,8 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc *.md
 
 %changelog
+* Mon Feb  8 2021 lingsheng <lingsheng@huawei.com> - 0.8.2-4.git485be65
+- Change BuildRequires to golang
+
 * Wed Nov 20 2019 duyeyu <duyeyu@huawei.com> - 0.8.2-3.git485be65
 - Package init
