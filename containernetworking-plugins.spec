@@ -16,7 +16,7 @@
  
 Name: %{project}-%{repo}
 Version: 1.0.1
-Release: 1
+Release: 2
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
@@ -60,33 +60,6 @@ BuildRequires: golang(github.com/vishvananda/netlink)
 BuildRequires: golang(golang.org/x/sys/unix)
 %endif
  
-Requires: golang(github.com/coreos/go-iptables/iptables)
-Requires: golang(github.com/vishvananda/netlink)
-Requires: golang(golang.org/x/sys/unix)
- 
-Provides: golang(%{import_path}/libcni) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/invoke) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/invoke/fakes) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/ip) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/ipam) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/ns) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/skel) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/testutils) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/types) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/types/020) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/types/current) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/utils) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/utils/hwaddr) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/utils/sysctl) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/version) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/version/legacy_examples) = %{version}-%{release}
-Provides: golang(%{import_path}/pkg/version/testhelpers) = %{version}-%{release}
-Provides: golang(%{import_path}/plugins/ipam/host-local/backend) = %{version}-%{release}
-Provides: golang(%{import_path}/plugins/ipam/host-local/backend/allocator) = %{version}-%{release}
-Provides: golang(%{import_path}/plugins/ipam/host-local/backend/disk) = %{version}-%{release}
-Provides: golang(%{import_path}/plugins/ipam/host-local/backend/testing) = %{version}-%{release}
-Provides: golang(%{import_path}/plugins/test/noop/debug) = %{version}-%{release}
- 
 %description devel
 This package contains library source intended for
 building other packages which use import path with
@@ -111,15 +84,6 @@ BuildRequires: golang(github.com/onsi/gomega/gbytes)
 BuildRequires: golang(github.com/onsi/gomega/gexec)
 BuildRequires: golang(github.com/vishvananda/netlink/nl)
 %endif
- 
-Requires: golang(github.com/d2g/dhcp4)
-Requires: golang(github.com/onsi/ginkgo)
-Requires: golang(github.com/onsi/ginkgo/config)
-Requires: golang(github.com/onsi/ginkgo/extensions/table)
-Requires: golang(github.com/onsi/gomega)
-Requires: golang(github.com/onsi/gomega/gbytes)
-Requires: golang(github.com/onsi/gomega/gexec)
-Requires: golang(github.com/vishvananda/netlink/nl)
  
 %description unit-test-devel
 This package contains unit tests for project
@@ -274,6 +238,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Mon Jan 10 2022 liyanan <liyanan32@huawei.com> - 1.0.1-2
+- drop deps for golang packages due to vendor has everything
+
 * Fri Dec 10 2021 haozi007 <liuhao27@huawei.com> - 1.0.1-1
 - Type:sync
 - ID:NA
