@@ -11,22 +11,25 @@
  
 # Used for comparing with latest upstream tag
 # to decide whether to autobuild
-%global built_tag v1.0.1
+%global built_tag v1.1.1
 %global built_tag_strip %(b=%{built_tag}; echo ${b:1})
  
 Name: %{project}-%{repo}
-Version: 1.0.1
-Release: 2
+Version: 1.1.1
+Release: 1
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
 Source0: https://github.com/containernetworking/plugins/archive/%{built_tag}.tar.gz
-
+Source1: 0001-k3s-cni-adaptation.patch
+Source2: https://github.com/zchee/reexec/archive/refs/heads/master.zip
 BuildRequires: golang >= 1.16.6
 BuildRequires: git
 BuildRequires: systemd-devel
+BuildRequires:  shadow
+BuildRequires:  xz
+BuildRequires:  unzip
 Requires: systemd
- 
 %if ! 0%{?with_bundled}
 BuildRequires: go-bindata
 BuildRequires: golang(github.com/vishvananda/netlink)
@@ -119,10 +122,82 @@ for d in $PLUGINS; do
         go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -extldflags '%__global_ldflags %{?__golang_extldflags}'" -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$d
     fi
 done
+
+TMPDIR=$(mktemp -d)
+WORKDIR=$TMPDIR/src/github.com/containernetworking/plugins
+mkdir -p $WORKDIR
+cd ..
+cp -r plugins-%{version}/* $WORKDIR
+mkdir -p $WORKDIR/vendor/github.com/docker/docker/pkg
+unzip -d $WORKDIR/vendor/github.com/docker/docker/pkg/ %{SOURCE2}
+mv $WORKDIR/vendor/github.com/docker/docker/pkg/reexec-master $WORKDIR/vendor/github.com/docker/docker/pkg/reexec
+
+cd $WORKDIR
+cp %{SOURCE1} ./
+patch -p1 < 0001-k3s-cni-adaptation.patch
+cat > main.go << EOF
+package main
+
+import (
+        "os"
+        "path/filepath"
+
+        "github.com/containernetworking/plugins/plugins/ipam/host-local"
+        "github.com/containernetworking/plugins/plugins/main/bridge"
+        "github.com/containernetworking/plugins/plugins/main/loopback"
+        //"github.com/containernetworking/plugins/plugins/meta/flannel"
+        "github.com/containernetworking/plugins/plugins/meta/portmap"
+        "github.com/docker/docker/pkg/reexec"
+)
+
+func main() {
+        os.Args[0] = filepath.Base(os.Args[0])
+        reexec.Register("host-local", hostlocal.Main)
+        reexec.Register("bridge", bridge.Main)
+        //reexec.Register("flannel", flannel.Main)
+        reexec.Register("loopback", loopback.Main)
+        reexec.Register("portmap", portmap.Main)
+        reexec.Init()
+}
+EOF
+
+PKG="github.com/k3s-io/k3s"
+PKG_CONTAINERD="github.com/containerd/containerd"
+PKG_K3S_CONTAINERD="github.com/k3s-io/containerd"
+PKG_CRICTL="github.com/kubernetes-sigs/cri-tools/pkg"
+PKG_K8S_BASE="k8s.io/component-base"
+PKG_K8S_CLIENT="k8s.io/client-go/pkg"
+PKG_CNI_PLUGINS="github.com/containernetworking/plugins"
+
+buildDate=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+VERSIONFLAGS="
+    -X ${PKG}/pkg/version.Version=${VERSION}
+    -X ${PKG}/pkg/version.GitCommit=${COMMIT:0:8}
+
+    -X ${PKG_K8S_CLIENT}/version.gitVersion=${VERSION}
+    -X ${PKG_K8S_CLIENT}/version.gitCommit=${COMMIT}
+    -X ${PKG_K8S_CLIENT}/version.gitTreeState=${TREE_STATE}
+    -X ${PKG_K8S_CLIENT}/version.buildDate=${buildDate}
+
+    -X ${PKG_K8S_BASE}/version.gitVersion=${VERSION}
+    -X ${PKG_K8S_BASE}/version.gitCommit=${COMMIT}
+    -X ${PKG_K8S_BASE}/version.gitTreeState=${TREE_STATE}
+    -X ${PKG_K8S_BASE}/version.buildDate=${buildDate}
+
+    -X ${PKG_CRICTL}/version.Version=${VERSION_CRICTL}
+
+    -X ${PKG_CONTAINERD}/version.Version=${VERSION_CONTAINERD}
+    -X ${PKG_CONTAINERD}/version.Package=${PKG_K3S_CONTAINERD}
+"
+TAGS="apparmor seccomp netcgo osusergo providerless"
+STATIC="-extldflags '-static -lm -ldl -lz -lpthread'"
+GO111MODULE=off CGO_ENABLED=0 GOPATH=$TMPDIR go build -tags "$TAGS" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o %{_builddir}/cni
  
 %install
 install -d -p %{buildroot}%{_libexecdir}/cni/
 install -p -m 0755 bin/* %{buildroot}/%{_libexecdir}/cni
+cp %{_builddir}/cni %{buildroot}%{_libexecdir}/cni/
 install -d -p     %{buildroot}/%{gopath}/src/github.com/containernetworking/plugins/
  
 install -dp %{buildroot}%{_unitdir}
@@ -238,6 +313,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Wed Jul 20 2022 Ge Wang <wangge20@h-partners.com> - 1.1.1-1
+- update to version 1.1.1
+
 * Mon Jan 10 2022 liyanan <liyanan32@huawei.com> - 1.0.1-2
 - drop deps for golang packages due to vendor has everything
 
