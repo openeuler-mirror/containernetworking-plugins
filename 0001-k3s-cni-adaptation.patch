@@ -1,0 +1,313 @@
+From 5108900d343863625ded1e56f2f7dfbc18c30f38 Mon Sep 17 00:00:00 2001
+From: wang--ge <wang__ge@126.com>
+Date: Wed, 20 Jul 2022 19:16:50 +0800
+Subject: [PATCH] k3s cni adaptation
+
+---
+ plugins/ipam/host-local/dns.go                   | 2 +-
+ plugins/ipam/host-local/dns_test.go              | 2 +-
+ plugins/ipam/host-local/host_local_suite_test.go | 2 +-
+ plugins/ipam/host-local/host_local_test.go       | 2 +-
+ plugins/ipam/host-local/main.go                  | 4 ++--
+ plugins/main/bridge/bridge.go                    | 4 ++--
+ plugins/main/bridge/bridge_suite_test.go         | 2 +-
+ plugins/main/bridge/bridge_test.go               | 2 +-
+ plugins/main/loopback/loopback.go                | 4 ++--
+ plugins/main/loopback/loopback_suite_test.go     | 2 +-
+ plugins/main/loopback/loopback_test.go           | 2 +-
+ plugins/meta/portmap/chain.go                    | 2 +-
+ plugins/meta/portmap/chain_test.go               | 2 +-
+ plugins/meta/portmap/main.go                     | 4 ++--
+ plugins/meta/portmap/portmap.go                  | 2 +-
+ plugins/meta/portmap/portmap_integ_test.go       | 2 +-
+ plugins/meta/portmap/portmap_suite_test.go       | 2 +-
+ plugins/meta/portmap/portmap_test.go             | 2 +-
+ plugins/meta/portmap/utils.go                    | 2 +-
+ 19 files changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/plugins/ipam/host-local/dns.go b/plugins/ipam/host-local/dns.go
+index 1b3975a..ab056ad 100644
+--- a/plugins/ipam/host-local/dns.go
++++ b/plugins/ipam/host-local/dns.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package hostlocal
+ 
+ import (
+ 	"bufio"
+diff --git a/plugins/ipam/host-local/dns_test.go b/plugins/ipam/host-local/dns_test.go
+index 1b87002..837c7d4 100644
+--- a/plugins/ipam/host-local/dns_test.go
++++ b/plugins/ipam/host-local/dns_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package hostlocal_test
+ 
+ import (
+ 	"io/ioutil"
+diff --git a/plugins/ipam/host-local/host_local_suite_test.go b/plugins/ipam/host-local/host_local_suite_test.go
+index d458f6b..b368b0e 100644
+--- a/plugins/ipam/host-local/host_local_suite_test.go
++++ b/plugins/ipam/host-local/host_local_suite_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package hostlocal_test
+ 
+ import (
+ 	. "github.com/onsi/ginkgo"
+diff --git a/plugins/ipam/host-local/host_local_test.go b/plugins/ipam/host-local/host_local_test.go
+index 5cba3d4..1b3a956 100644
+--- a/plugins/ipam/host-local/host_local_test.go
++++ b/plugins/ipam/host-local/host_local_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package hostlocal_test
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/ipam/host-local/main.go b/plugins/ipam/host-local/main.go
+index 9983c83..3af4407 100644
+--- a/plugins/ipam/host-local/main.go
++++ b/plugins/ipam/host-local/main.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package hostlocal
+ 
+ import (
+ 	"fmt"
+@@ -29,7 +29,7 @@ import (
+ 	"github.com/containernetworking/cni/pkg/version"
+ )
+ 
+-func main() {
++func Main() {
+ 	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, bv.BuildString("host-local"))
+ }
+ 
+diff --git a/plugins/main/bridge/bridge.go b/plugins/main/bridge/bridge.go
+index 23c1256..49c84bb 100644
+--- a/plugins/main/bridge/bridge.go
++++ b/plugins/main/bridge/bridge.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package bridge
+ 
+ import (
+ 	"encoding/json"
+@@ -693,7 +693,7 @@ func cmdDel(args *skel.CmdArgs) error {
+ 	return err
+ }
+ 
+-func main() {
++func Main() {
+ 	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, bv.BuildString("bridge"))
+ }
+ 
+diff --git a/plugins/main/bridge/bridge_suite_test.go b/plugins/main/bridge/bridge_suite_test.go
+index 3e48736..392098e 100644
+--- a/plugins/main/bridge/bridge_suite_test.go
++++ b/plugins/main/bridge/bridge_suite_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package bridge_test
+ 
+ import (
+ 	. "github.com/onsi/ginkgo"
+diff --git a/plugins/main/bridge/bridge_test.go b/plugins/main/bridge/bridge_test.go
+index 118074e..a0f18fb 100644
+--- a/plugins/main/bridge/bridge_test.go
++++ b/plugins/main/bridge/bridge_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package bridge_test
+ 
+ import (
+ 	"encoding/json"
+diff --git a/plugins/main/loopback/loopback.go b/plugins/main/loopback/loopback.go
+index cae4aa4..8394a1b 100644
+--- a/plugins/main/loopback/loopback.go
++++ b/plugins/main/loopback/loopback.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package loopback
+ 
+ import (
+ 	"encoding/json"
+@@ -172,7 +172,7 @@ func cmdDel(args *skel.CmdArgs) error {
+ 	return nil
+ }
+ 
+-func main() {
++func Main() {
+ 	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, bv.BuildString("loopback"))
+ }
+ 
+diff --git a/plugins/main/loopback/loopback_suite_test.go b/plugins/main/loopback/loopback_suite_test.go
+index d252d12..a2b6ae2 100644
+--- a/plugins/main/loopback/loopback_suite_test.go
++++ b/plugins/main/loopback/loopback_suite_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main_test
++package loopback_test
+ 
+ import (
+ 	"github.com/onsi/gomega/gexec"
+diff --git a/plugins/main/loopback/loopback_test.go b/plugins/main/loopback/loopback_test.go
+index b2aec44..12e5aa1 100644
+--- a/plugins/main/loopback/loopback_test.go
++++ b/plugins/main/loopback/loopback_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main_test
++package loopback_test
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/meta/portmap/chain.go b/plugins/meta/portmap/chain.go
+index adad1e7..87558cf 100644
+--- a/plugins/meta/portmap/chain.go
++++ b/plugins/meta/portmap/chain.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/meta/portmap/chain_test.go b/plugins/meta/portmap/chain_test.go
+index c4e41be..69f547e 100644
+--- a/plugins/meta/portmap/chain_test.go
++++ b/plugins/meta/portmap/chain_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap_test
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/meta/portmap/main.go b/plugins/meta/portmap/main.go
+index 003d4d6..b5f5b3f 100644
+--- a/plugins/meta/portmap/main.go
++++ b/plugins/meta/portmap/main.go
+@@ -23,7 +23,7 @@
+ // of the actual host port. If there is a service on the host, it will have all
+ // its traffic captured by the container. If another container also claims a given
+ // port, it will caputure the traffic - it is last-write-wins.
+-package main
++package portmap
+ 
+ import (
+ 	"encoding/json"
+@@ -135,7 +135,7 @@ func cmdDel(args *skel.CmdArgs) error {
+ 	return nil
+ }
+ 
+-func main() {
++func Main() {
+ 	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, bv.BuildString("portmap"))
+ }
+ 
+diff --git a/plugins/meta/portmap/portmap.go b/plugins/meta/portmap/portmap.go
+index 8178bfb..763ba12 100644
+--- a/plugins/meta/portmap/portmap.go
++++ b/plugins/meta/portmap/portmap.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/meta/portmap/portmap_integ_test.go b/plugins/meta/portmap/portmap_integ_test.go
+index 3e8201e..5d91e08 100644
+--- a/plugins/meta/portmap/portmap_integ_test.go
++++ b/plugins/meta/portmap/portmap_integ_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap_test
+ 
+ import (
+ 	"bytes"
+diff --git a/plugins/meta/portmap/portmap_suite_test.go b/plugins/meta/portmap/portmap_suite_test.go
+index 55aee92..98a2e46 100644
+--- a/plugins/meta/portmap/portmap_suite_test.go
++++ b/plugins/meta/portmap/portmap_suite_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap_test
+ 
+ import (
+ 	"math/rand"
+diff --git a/plugins/meta/portmap/portmap_test.go b/plugins/meta/portmap/portmap_test.go
+index dd68391..c31d139 100644
+--- a/plugins/meta/portmap/portmap_test.go
++++ b/plugins/meta/portmap/portmap_test.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap_test
+ 
+ import (
+ 	"fmt"
+diff --git a/plugins/meta/portmap/utils.go b/plugins/meta/portmap/utils.go
+index a733fda..163e787 100644
+--- a/plugins/meta/portmap/utils.go
++++ b/plugins/meta/portmap/utils.go
+@@ -12,7 +12,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-package main
++package portmap
+ 
+ import (
+ 	"fmt"
+-- 
+2.27.0
+
