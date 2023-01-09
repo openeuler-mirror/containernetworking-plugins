@@ -16,13 +16,14 @@
  
 Name: %{project}-%{repo}
 Version: 1.1.1
-Release: 1
+Release: 2
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
 Source0: https://github.com/containernetworking/plugins/archive/%{built_tag}.tar.gz
 Source1: 0001-k3s-cni-adaptation.patch
 Source2: https://github.com/zchee/reexec/archive/refs/heads/master.zip
+Source3:        sys.tar.gz
 BuildRequires: golang >= 1.16.6
 BuildRequires: git
 BuildRequires: systemd-devel
@@ -99,7 +100,11 @@ rm -rf plugins/main/windows
  
 # Use correct paths in cni-dhcp unitfiles
 sed -i 's/\/opt\/cni\/bin/\%{_prefix}\/libexec\/cni/' plugins/ipam/dhcp/systemd/cni-dhcp.service
- 
+%ifarch loongarch64
+rm -rf vendor/golang.org/x/sys
+tar -xf %{SOURCE3} -C vendor/golang.org/x
+%endif
+
 %build
 export ORG_PATH="github.com/%{project}"
 export REPO_PATH="$ORG_PATH/%{repo}"
@@ -313,6 +318,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Mon Jan 9 2023 huajingyun <huajingyun@loongson.cn> - 1.1.1-2
+- add loong64 support
+
 * Wed Jul 20 2022 Ge Wang <wangge20@h-partners.com> - 1.1.1-1
 - update to version 1.1.1
 
