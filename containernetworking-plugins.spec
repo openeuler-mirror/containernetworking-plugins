@@ -11,12 +11,12 @@
  
 # Used for comparing with latest upstream tag
 # to decide whether to autobuild
-%global built_tag v1.1.1
+%global built_tag v1.2.0
 %global built_tag_strip %(b=%{built_tag}; echo ${b:1})
  
 Name: %{project}-%{repo}
-Version: 1.1.1
-Release: 2
+Version: 1.2.0
+Release: 1
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
@@ -313,6 +313,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Mon Apr 24 2023 Jian Zhang <zhang_jian7@hoperun.com> - 1.2.0-1
+- update to version 1.2.0
+
 * Thu Feb 09 2023 yaoxin <yaoxin30@h-partners.com> - 1.1.1-2
 - Add PIE,BIND_NOW,RELRO,STRIP secure compilation options
 
