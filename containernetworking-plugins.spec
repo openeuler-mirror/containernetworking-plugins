@@ -16,7 +16,7 @@
  
 Name: %{project}-%{repo}
 Version: 1.1.1
-Release: 2
+Release: 3
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
@@ -40,6 +40,9 @@ BuildRequires: golang(github.com/d2g/dhcp4client)
 BuildRequires: golang(github.com/vishvananda/netlink)
 BuildRequires: golang(golang.org/x/sys/unix)
 BuildRequires: golang(github.com/coreos/go-iptables/iptables)
+%endif
+%ifarch loongarch64
+Patch001:	0001-update-sys-to-support-loong64.patch
 %endif
  
 Obsoletes: %{project}-cni < 0.7.1-2
@@ -318,6 +321,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Tue Feb 7 2023 Wenlong Zhang <zhangwenlong@loongson.cn> - 1.1.1-3
+- update sys to support loongarch64
+
 * Mon Jan 9 2023 huajingyun <huajingyun@loongson.cn> - 1.1.1-2
 - add loong64 support
 
