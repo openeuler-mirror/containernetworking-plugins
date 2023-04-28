@@ -1,7 +1,7 @@
-From 5108900d343863625ded1e56f2f7dfbc18c30f38 Mon Sep 17 00:00:00 2001
-From: wang--ge <wang__ge@126.com>
-Date: Wed, 20 Jul 2022 19:16:50 +0800
-Subject: [PATCH] k3s cni adaptation
+From ae558584459edd75cd8ae2de9000acba8afd092d Mon Sep 17 00:00:00 2001
+From: Jian Zhang <zhang_jian7@hoperun.com>
+Date: Mon, 24 Apr 2023 03:10:21 +0800
+Subject: [PATCH] k3s-cni-adaptation
 
 ---
  plugins/ipam/host-local/dns.go                   | 2 +-
@@ -39,7 +39,7 @@ index 1b3975a..ab056ad 100644
  import (
  	"bufio"
 diff --git a/plugins/ipam/host-local/dns_test.go b/plugins/ipam/host-local/dns_test.go
-index 1b87002..837c7d4 100644
+index d7e5c13..9c74521 100644
 --- a/plugins/ipam/host-local/dns_test.go
 +++ b/plugins/ipam/host-local/dns_test.go
 @@ -12,7 +12,7 @@
@@ -50,7 +50,7 @@ index 1b87002..837c7d4 100644
 +package hostlocal_test
  
  import (
- 	"io/ioutil"
+ 	"os"
 diff --git a/plugins/ipam/host-local/host_local_suite_test.go b/plugins/ipam/host-local/host_local_suite_test.go
 index d458f6b..b368b0e 100644
 --- a/plugins/ipam/host-local/host_local_suite_test.go
@@ -65,7 +65,7 @@ index d458f6b..b368b0e 100644
  import (
  	. "github.com/onsi/ginkgo"
 diff --git a/plugins/ipam/host-local/host_local_test.go b/plugins/ipam/host-local/host_local_test.go
-index 5cba3d4..1b3a956 100644
+index b9841ab..610185d 100644
 --- a/plugins/ipam/host-local/host_local_test.go
 +++ b/plugins/ipam/host-local/host_local_test.go
 @@ -12,7 +12,7 @@
@@ -100,7 +100,7 @@ index 9983c83..3af4407 100644
  }
  
 diff --git a/plugins/main/bridge/bridge.go b/plugins/main/bridge/bridge.go
-index 23c1256..49c84bb 100644
+index dce8568..2b265c0 100644
 --- a/plugins/main/bridge/bridge.go
 +++ b/plugins/main/bridge/bridge.go
 @@ -12,7 +12,7 @@
@@ -112,7 +112,7 @@ index 23c1256..49c84bb 100644
  
  import (
  	"encoding/json"
-@@ -693,7 +693,7 @@ func cmdDel(args *skel.CmdArgs) error {
+@@ -707,7 +707,7 @@ func cmdDel(args *skel.CmdArgs) error {
  	return err
  }
  
@@ -135,7 +135,7 @@ index 3e48736..392098e 100644
  import (
  	. "github.com/onsi/ginkgo"
 diff --git a/plugins/main/bridge/bridge_test.go b/plugins/main/bridge/bridge_test.go
-index 118074e..a0f18fb 100644
+index 9a75e64..127cdd1 100644
 --- a/plugins/main/bridge/bridge_test.go
 +++ b/plugins/main/bridge/bridge_test.go
 @@ -12,7 +12,7 @@
@@ -222,7 +222,7 @@ index c4e41be..69f547e 100644
  import (
  	"fmt"
 diff --git a/plugins/meta/portmap/main.go b/plugins/meta/portmap/main.go
-index 003d4d6..b5f5b3f 100644
+index 1e6bdd1..ecfd1bb 100644
 --- a/plugins/meta/portmap/main.go
 +++ b/plugins/meta/portmap/main.go
 @@ -23,7 +23,7 @@
@@ -234,7 +234,7 @@ index 003d4d6..b5f5b3f 100644
  
  import (
  	"encoding/json"
-@@ -135,7 +135,7 @@ func cmdDel(args *skel.CmdArgs) error {
+@@ -136,7 +136,7 @@ func cmdDel(args *skel.CmdArgs) error {
  	return nil
  }
  
@@ -244,7 +244,7 @@ index 003d4d6..b5f5b3f 100644
  }
  
 diff --git a/plugins/meta/portmap/portmap.go b/plugins/meta/portmap/portmap.go
-index 8178bfb..763ba12 100644
+index b89a9df..5c0ec59 100644
 --- a/plugins/meta/portmap/portmap.go
 +++ b/plugins/meta/portmap/portmap.go
 @@ -12,7 +12,7 @@
@@ -257,7 +257,7 @@ index 8178bfb..763ba12 100644
  import (
  	"fmt"
 diff --git a/plugins/meta/portmap/portmap_integ_test.go b/plugins/meta/portmap/portmap_integ_test.go
-index 3e8201e..5d91e08 100644
+index 2468865..e46990f 100644
 --- a/plugins/meta/portmap/portmap_integ_test.go
 +++ b/plugins/meta/portmap/portmap_integ_test.go
 @@ -12,7 +12,7 @@
@@ -309,5 +309,5 @@ index a733fda..163e787 100644
  import (
  	"fmt"
 -- 
-2.27.0
+2.33.0
 
