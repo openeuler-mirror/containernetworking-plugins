@@ -16,7 +16,7 @@
  
 Name: %{project}-%{repo}
 Version: 1.1.1
-Release: 2
+Release: 3
 Summary: Libraries for use by writing CNI plugin
 License: ASL 2.0
 URL: https://github.com/containernetworking/plugins
@@ -119,7 +119,11 @@ for d in $PLUGINS; do
     if [ -d "$d" ]; then
         plugin="$(basename "$d")"
         echo "  $plugin"
-        go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -s -w -linkmode=external -extldflags '%__global_ldflags %{?__golang_extldflags} -Wl,-z,now ' " -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$d
+				%if "%toolchain" == "clang"
+						go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -s -w -linkmode=external -extldflags '%__global_ldflags %{?__golang_extldflags} -Wl,-z,now ' " -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$d
+				%else 
+						go build -buildmode pie -compiler gc -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d '  \n') -s -w -linkmode=external -extldflags '%__global_ldflags %{?__golang_extldflags} -Wl,-z,now ' " -a -v -x -o "${PWD}/bin/$plugin" "$@" github.com/containernetworking/plugins/$d
+				%endif
     fi
 done
 
@@ -192,7 +196,11 @@ VERSIONFLAGS="
 "
 TAGS="apparmor seccomp netcgo osusergo providerless"
 STATIC="-extldflags '-static -lm -ldl -lz -lpthread'"
-GO111MODULE=off CGO_ENABLED=0 GOPATH=$TMPDIR go build -tags "$TAGS" -buildmode=pie -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC -s -w -linkmode=external -extldflags '-Wl,-z,relro  -Wl,-z,now  ' " -o %{_builddir}/cni
+%if "%toolchain" == "clang"
+	GO111MODULE=off CGO_ENABLED=0 GOPATH=$TMPDIR go build -tags "$TAGS" -buildmode=pie -ldflags "$VERSIONFLAGS $STATIC -s -w -linkmode=external -extldflags '-Wl,-z,relro  -Wl,-z,now  ' " -o %{_builddir}/cni
+%else 
+	GO111MODULE=off CGO_ENABLED=0 GOPATH=$TMPDIR go build -tags "$TAGS" -buildmode=pie -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC -s -w -linkmode=external -extldflags '-Wl,-z,relro  -Wl,-z,now  ' " -o %{_builddir}/cni
+%endif
  
 %install
 install -d -p %{buildroot}%{_libexecdir}/cni/
@@ -313,6 +321,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 
 %changelog
+* Sat May 06 2023 yoo <sunyuechi@iscas.ac.cn> - 1.1.1-3
+- fix clang build error
+
 * Thu Feb 09 2023 yaoxin <yaoxin30@h-partners.com> - 1.1.1-2
 - Add PIE,BIND_NOW,RELRO,STRIP secure compilation options
 
